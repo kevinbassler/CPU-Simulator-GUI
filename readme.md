@@ -10,3 +10,6 @@ Please install the font: "IDAutomationHC39M Free Version". You can find it in th
 
 ## License
 This project is licensed under the terms of the [MIT license](https://choosealicense.com/licenses/mit/).
+
+##
+I added Longest Job First and Highest Response Ratio Next algorithms and made the algorithms select random burst and arrival times.
