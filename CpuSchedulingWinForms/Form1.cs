@@ -53,6 +53,8 @@ namespace CpuSchedulingWinForms
             }
         }
 
+  
+
         private void btnPriority_Click(object sender, EventArgs e)
         {
             if (txtProcess.Text != "")
@@ -73,6 +75,32 @@ namespace CpuSchedulingWinForms
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (txtProcess.Text != "")
+            {
+                Algorithms.ljfAlgorithm(txtProcess.Text);
+            }
+            else
+            {
+                MessageBox.Show("Enter number of processes", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtProcess.Focus();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (txtProcess.Text != "")
+            {
+                Algorithms.hrrnAlgorithm(txtProcess.Text);
+            }
+            else
+            {
+                MessageBox.Show("Enter number of processes", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtProcess.Focus();
+            }
         }
     }
 }

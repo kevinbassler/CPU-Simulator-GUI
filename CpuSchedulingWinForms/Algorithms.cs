@@ -9,6 +9,145 @@ namespace CpuSchedulingWinForms
 {
     public static class Algorithms
     {
+        //added longest job first algorithm
+        public static void ljfAlgorithm(string userInput)
+        {
+            int np = Convert.ToInt16(userInput);
+            double[] bp = new double[np];
+            double[] wtp = new double[np];
+            double[] sortedBp = new double[np];
+            double twt = 0.0, awt;
+            bool found = false;
+
+            DialogResult result = MessageBox.Show("Longest Job First Scheduling", "", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (result == DialogResult.Yes)
+            {
+                for (int i = 0; i < np; i++)
+                {
+                    string input = Microsoft.VisualBasic.Interaction.InputBox("Enter burst time: ",
+                                                              "Burst time for P" + (i + 1),
+                                                              "",
+                                                              -1, -1);
+
+                    bp[i] = Convert.ToDouble(input);
+                    sortedBp[i] = bp[i];
+                }
+
+                // Sort in descending order
+                Array.Sort(sortedBp);
+                Array.Reverse(sortedBp);
+
+                for (int i = 0; i < np; i++)
+                {
+                    if (i == 0)
+                    {
+                        for (int j = 0; j < np; j++)
+                        {
+                            if (sortedBp[i] == bp[j] && !found)
+                            {
+                                wtp[i] = 0;
+                                MessageBox.Show("Waiting time for P" + (j + 1) + " = " + wtp[i], "Waiting Time", MessageBoxButtons.OK);
+                                bp[j] = -1;
+                                found = true;
+                            }
+                        }
+                        found = false;
+                    }
+                    else
+                    {
+                        for (int j = 0; j < np; j++)
+                        {
+                            if (sortedBp[i] == bp[j] && !found)
+                            {
+                                wtp[i] = wtp[i - 1] + sortedBp[i - 1];
+                                MessageBox.Show("Waiting time for P" + (j + 1) + " = " + wtp[i], "Waiting Time", MessageBoxButtons.OK);
+                                bp[j] = -1;
+                                found = true;
+                            }
+                        }
+                        found = false;
+                    }
+                }
+
+                for (int i = 0; i < np; i++)
+                {
+                    twt += wtp[i];
+                }
+                awt = twt / np;
+                MessageBox.Show("Average waiting time = " + awt + " sec(s)", "Average Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        //added highest response ratio nex algorithm
+        public static void hrrnAlgorithm(string userInput)
+        {
+            int np = Convert.ToInt16(userInput);
+            double[] arrival = new double[np];
+            double[] burst = new double[np];
+            bool[] completed = new bool[np];
+            double[] waiting = new double[np];
+            double[] turnaround = new double[np];
+
+            double currentTime = 0;
+            int completedCount = 0;
+
+            DialogResult result = MessageBox.Show("Highest Response Ratio Next Scheduling", "", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (result == DialogResult.Yes)
+            {
+                for (int i = 0; i < np; i++)
+                {
+                    arrival[i] = Convert.ToDouble(
+                        Microsoft.VisualBasic.Interaction.InputBox("Enter arrival time:", "Arrival time for P" + (i + 1), "", -1, -1));
+                    burst[i] = Convert.ToDouble(
+                        Microsoft.VisualBasic.Interaction.InputBox("Enter burst time:", "Burst time for P" + (i + 1), "", -1, -1));
+                }
+
+                while (completedCount < np)
+                {
+                    double maxResponseRatio = -1;
+                    int selected = -1;
+
+                    for (int i = 0; i < np; i++)
+                    {
+                        if (!completed[i] && arrival[i] <= currentTime)
+                        {
+                            double responseRatio = (currentTime - arrival[i] + burst[i]) / burst[i];
+                            if (responseRatio > maxResponseRatio)
+                            {
+                                maxResponseRatio = responseRatio;
+                                selected = i;
+                            }
+                        }
+                    }
+
+                    if (selected != -1)
+                    {
+                        waiting[selected] = currentTime - arrival[selected];
+                        currentTime += burst[selected];
+                        turnaround[selected] = currentTime - arrival[selected];
+                        completed[selected] = true;
+                        completedCount++;
+
+                        MessageBox.Show("Waiting time for P" + (selected + 1) + " = " + waiting[selected], "Waiting Time", MessageBoxButtons.OK);
+                        MessageBox.Show("Turnaround time for P" + (selected + 1) + " = " + turnaround[selected], "Turnaround Time", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        currentTime++; // No process has arrived yet
+                    }
+                }
+
+                double avgWaiting = waiting.Sum() / np;
+                double avgTurnaround = turnaround.Sum() / np;
+
+                MessageBox.Show("Average waiting time = " + avgWaiting + " sec(s)", "Average Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Average turnaround time = " + avgTurnaround + " sec(s)", "Average Turnaround Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+
         public static void fcfsAlgorithm(string userInput)
         {
             int np = Convert.ToInt16(userInput);
@@ -261,9 +400,9 @@ namespace CpuSchedulingWinForms
             double timeQuantum;
             double waitTime = 0, turnaroundTime = 0;
             double averageWaitTime, averageTurnaroundTime;
-            double[] arrivalTime = new double[10];
-            double[] burstTime = new double[10];
-            double[] temp = new double[10];
+            double[] arrivalTime = new double[25];
+            double[] burstTime = new double[25];
+            double[] temp = new double[25];
             int x = np;
 
             DialogResult result = MessageBox.Show("Round Robin Scheduling", "", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
